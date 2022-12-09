@@ -1,0 +1,17 @@
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.csproj.AssemblyReference.cache
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.AssemblyInfoInputs.cache
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.AssemblyInfo.cs
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.csproj.CoreCompileInputs.cache
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\utils.exe
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\utils.deps.json
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\utils.runtimeconfig.json
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\utils.dll
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\utils.pdb
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.csproj.CopyComplete
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.dll
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\refint\utils.dll
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.pdb
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\utils.genruntimeconfig.cache
+C:\Users\lnoor\source\repos\UserDiaryServer\utils\obj\Debug\net6.0\ref\utils.dll

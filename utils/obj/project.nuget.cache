@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "u3eMVhIVXTKoOppSQUZnOJ94nfBEKeXpyRHXz7XLRmwOr/ESxwefkZ0Ho8Ofr3dNwVe30njdpuXy4Lm0QnQ54w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\lnoor\\source\\repos\\UserDiaryServer\\utils\\utils.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lnoor\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
