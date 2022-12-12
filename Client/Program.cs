@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using UserDiaryClient;
+using utils;
 
 namespace UserDiaryClient // Note: actual namespace depends on the project name.
 {
@@ -60,7 +61,11 @@ namespace UserDiaryClient // Note: actual namespace depends on the project name.
             //    Connect(Convert.ToString(ip), "Hello I'm Device 2...");
             //}).Start();
             //Client.instance.ConnectToServer();
-            Client.instance.ConnectToServer(1);
+            Client.instance.ConnectToServer((int)ClientPackets.login);
+            Dictionary<string, object> res = Client.instance.tcp.Result();
+            Console.WriteLine(res["Status"]);
+            Console.WriteLine(res["Response"]);
+            //Console.WriteLine(res["RequestId"]);
             //Client.instance.tcp.Login();
             //Console.ReadLine();
             Client.instance.Disconnect();

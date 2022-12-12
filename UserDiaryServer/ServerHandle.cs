@@ -26,50 +26,48 @@ namespace UserDiaryServer
             // TODO: send player into game
         }
 
-        class LoginRequest
-        {
-            public string username;
-            public string password;
+        //class LoginRequest
+        //{
+        //    public string username;
+        //    public string password;
 
-            public LoginRequest(string username, string password)
-            {
-                this.username = username;
-                this.password = password;
-            }
-            //public LoginRequest() { }
-        }
+        //    public LoginRequest(string username, string password)
+        //    {
+        //        this.username = username;
+        //        this.password = password;
+        //    }
+        //    //public LoginRequest() { }
+        //}
 
         public static void Login(int _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
-            string stringData = _packet.ReadString();
+            string response = _packet.ReadString();
             
-            Console.WriteLine(stringData);
-            //try { 
-            dynamic result =
-                JsonConvert.DeserializeObject(stringData);
-            //var result = JsonConvert.DeserializeObject<Request>(stringData);
-            //LoginRequest results = JToken.Parse(stringData).ToObject<LoginRequest>();
-            //Console.WriteLine($"{result}, {result.GetType()}");
+            Console.WriteLine(response);
 
+            JMessage jdata = JMessage.Deserialize(response);
+            utils.LoginRequest result = jdata.Value.ToObject<utils.LoginRequest>();
+            //Console.WriteLine(result);
+            
             string _username = result.username;
             string _password = result.password;
-            //string _username, _password;
-            //}
-            //catch(Exception err)
-            //{
-            //    Console.WriteLine("JTOKEN PARSE");
-            //    Console.WriteLine(err.Message);
-            //}
+            
+            Console.WriteLine($"Username: {_username}, Password: {_password}");
 
-            Console.WriteLine($"{_username}, {_password}");
 
-            //Console.WriteLine($" player {_fromClient} is here to login with username = {_username}.");
-            //In fulure, it will send dictionary
-            ServerSend.LoginReceived(_fromClient, "Logged In Successfull");
+            dynamic res = UserDiary.Cache.getCache().UserLog(_username,_password);
+            if ((int)res["Status"] == 200)
+            { Console.WriteLine("Login Successful"); }
+                dynamic clientRes  = new Dictionary<string, object>(){
+                            { "Status", (int)res["Status"] },
+                            { "Response", res["Response"]} };
+                ServerSend.LoginReceived(_fromClient, JMessage.Serialize(JMessage.FromValue(clientRes)));
+            
+            Console.WriteLine($" player {_fromClient} is here to login with username = {_username}.");
             if (_fromClient != _clientIdCheck)
             {
-                //Console.WriteLine($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
+                Console.WriteLine($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
             }
             // TODO: send player into game
         }
@@ -77,15 +75,23 @@ namespace UserDiaryServer
         public static void Register(int _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
-            string _username = _packet.ReadString();
-            //string _password = _packet.ReadString();
+            string response = _packet.ReadString();
 
-            Console.WriteLine($" player {_fromClient} is here to register with username = {_username}.");
+            JMessage jdata = JMessage.Deserialize(response);
+            utils.RegisterRequest result = jdata.Value.ToObject<utils.RegisterRequest>();
+            //Console.WriteLine(result);
+
+
+            //Console.WriteLine($"Username: {_username}, Password: {_password}");
+
+            dynamic res = UserDiary.Cache.getCache().Register(result.name, result.username, result.password, result.email, result.phone);
+
+            Console.WriteLine($" player {_fromClient} is here to register with username = {result.username}.");
             //In fulure, it will send dictionary
             ServerSend.LoginReceived(_fromClient, "Registered Successfull");
             if (_fromClient != _clientIdCheck)
             {
-                Console.WriteLine($"Player \"{_username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
+                Console.WriteLine($"Player \"{result.username}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
             }
             // TODO: send player into game
         }

@@ -12,6 +12,7 @@ using System.Windows.Markup;
 using System.Diagnostics;
 using utils;
 using System.Net.Http;
+using System.Windows;
 
 namespace UserDiaryClient
 {
@@ -25,7 +26,7 @@ namespace UserDiaryClient
         public int myId = 0;
         public TCP tcp;
 
-        private delegate void PacketHandler(Packet _packet);
+        private delegate dynamic PacketHandler(Packet _packet);
         private static Dictionary<int, PacketHandler> packetHandlers;
 
         private void Awake()
@@ -115,6 +116,8 @@ namespace UserDiaryClient
             private byte[] receiveBuffer;
             public int requestId;
             public bool requestFinished = false;
+            private static ManualResetEvent connectDone = new ManualResetEvent(false);
+            Dictionary<string, object> response;
 
             //public TCP(int id)
             //{
@@ -122,11 +125,12 @@ namespace UserDiaryClient
             //}
             public void Disconnect()
             {
-                stream.Close();
+                //stream.Close();
                 socket.Close();
             }
             public void Connect()
             {
+        
                 try
                 {
                 socket = new TcpClient();
@@ -137,8 +141,11 @@ namespace UserDiaryClient
 
                 receiveBuffer = new byte[dataBufferSize];
 
-                    socket.BeginConnect(instance.ip, instance.port, ConnectCallback, null);
-                    Console.ReadKey();
+                socket.BeginConnect(instance.ip, instance.port, ConnectCallback, null);
+                    ////bool success = result.AsyncWaitHandle.WaitOne(5000, true);
+                    //connectDone.WaitOne();
+                    Console.Read();
+                    //MessageBox.Show(socket.Connected.ToString());
                     //socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
                     //socket.Connect();
                     //sendData(stream, "Hello Server");
@@ -186,6 +193,7 @@ namespace UserDiaryClient
                 Console.WriteLine("Waiting for response...");
                 
                 socket.EndConnect(_result);
+                connectDone.Set();
                 if (!socket.Connected)
                 {
                     return;
@@ -222,16 +230,15 @@ namespace UserDiaryClient
                     }
                     byte[] _data = new byte[_byteLength];
                    Array.Copy(receiveBuffer, 0, _data, 0, _byteLength);
-                    receivedData.Reset(HandleData(_data));
+                    dynamic res = HandleData(_data);
                     if (requestFinished)
                     {
-                        if (requestId == 1)
-                        {
-                            ClientSend.Login();
-
-                        }
+                        if (requestId == (int)ClientPackets.login) { ClientSend.Login(); }
+                        else if (requestId == (int)ClientPackets.register) { ClientSend.Register(); }
                         requestFinished = false;
                     }
+                    response = res["Data"];
+                    receivedData.Reset(res["Status"]);
                     stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, ReceiveCallback, null);
                 }
                 catch (Exception err)
@@ -241,25 +248,16 @@ namespace UserDiaryClient
                 }
             }
 
-            public void Login()
+            public Dictionary<string, object> Result()
             {
                 if (socket.Connected)
                 {
-                    ClientSend.Login();
-                    receiveBuffer = new byte[dataBufferSize];
-
-                    receivedData = new Packet();
-                    stream = socket.GetStream();
-                     //if(!stream.DataAvailable) { 
-                        
-                     //   Console.WriteLine("DATA TO RECEIVE"); }
-                    
-                    stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, ReceiveCallback, null);
-
+                    return response;
                 }
                 else
                 {
                     Console.WriteLine("Connect again");
+                    return null;
                 }
             }
 
@@ -278,8 +276,9 @@ namespace UserDiaryClient
                 }
             }
 
-            private bool HandleData(byte[] _data)
+            private dynamic HandleData(byte[] _data)
             {
+                Dictionary<string, object> data = null;
                 int _packetLength = 0;
 
                 receivedData.SetBytes(_data);
@@ -289,7 +288,11 @@ namespace UserDiaryClient
                     _packetLength = receivedData.ReadInt();
                     if (_packetLength <= 0)
                     {
-                        return true;
+                        return new Dictionary<string, dynamic>()
+                            {
+                                {"Status", true },
+                                {"Data", data }
+                            }; 
                     }
                 }
 
@@ -302,7 +305,7 @@ namespace UserDiaryClient
                         {
                             int _packetId = _packet.ReadInt();
                             Console.WriteLine($"Packet ID: {_packetId}");
-                            packetHandlers[_packetId](_packet);
+                            data = packetHandlers[_packetId](_packet);
                         }
                     //});
 
@@ -312,17 +315,29 @@ namespace UserDiaryClient
                         _packetLength = receivedData.ReadInt();
                         if (_packetLength <= 0)
                         {
-                            return true;
+                            return new Dictionary<string, dynamic>()
+                            {
+                                {"Status", true },
+                                {"Data", data }
+                            };
                         }
                     }
                 }
 
                 if (_packetLength <= 1)
                 {
-                    return true;
+                    return new Dictionary<string, dynamic>()
+                            {
+                                {"Status", true },
+                                {"Data", data }
+                            };
                 }
 
-                return false;
+                return new Dictionary<string, dynamic>()
+                            {
+                                {"Status", false },
+                                {"Data", data }
+                            };
             }
         }
 

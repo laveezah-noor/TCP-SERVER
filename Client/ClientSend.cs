@@ -1,10 +1,4 @@
-﻿using Nancy.Json;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using utils;
 
 namespace UserDiaryClient
@@ -39,34 +33,28 @@ namespace UserDiaryClient
             {   
                 _packet.Write(Client.instance.myId);
                 
-                LoginRequest loginCredentials = new("noor", "noor");
+                utils.LoginRequest loginCredentials = new("noor", "noor");
                 string data = JMessage.Serialize(JMessage.FromValue(loginCredentials));
                 Console.WriteLine(data);
                 _packet.Write(data);
 
                 SendTCPData(_packet);
+
                 Console.WriteLine("Login Packet Send!");
             }
         }
-
-        class LoginRequest
-        {
-            public string username;
-            public string password;
-
-            public LoginRequest(string username, string password)
-            {
-                this.username = username;
-                this.password = password;
-            }
-        }
+        
+        
 
         public static void Register()
         {
             using (Packet _packet = new Packet((int)ClientPackets.register))
             {
                 _packet.Write(Client.instance.myId);
-                _packet.Write("HardCoded User");
+                utils.RegisterRequest registerCredentials = new("noor", "Noor", "noor", "", "");
+                string data = JMessage.Serialize(JMessage.FromValue(registerCredentials));
+                Console.WriteLine(data);
+                _packet.Write(data);
 
                 SendTCPData(_packet);
                 Console.WriteLine("Register Packet Send!");
