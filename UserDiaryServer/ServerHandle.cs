@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UserDiary;
 using utils;
 
 namespace UserDiaryServer
@@ -48,8 +49,8 @@ namespace UserDiaryServer
 
             JMessage jdata = JMessage.Deserialize(response);
             utils.LoginRequest result = jdata.Value.ToObject<utils.LoginRequest>();
-            //Console.WriteLine(result);
-            
+            Console.WriteLine(result);
+
             string _username = result.username;
             string _password = result.password;
             
@@ -61,7 +62,7 @@ namespace UserDiaryServer
             { Console.WriteLine("Login Successful"); }
                 dynamic clientRes  = new Dictionary<string, object>(){
                             { "Status", (int)res["Status"] },
-                            { "Response", res["Response"]} };
+                            { "Response", (User)res["Response"]} };
                 ServerSend.LoginReceived(_fromClient, JMessage.Serialize(JMessage.FromValue(clientRes)));
             
             Console.WriteLine($" player {_fromClient} is here to login with username = {_username}.");
@@ -77,14 +78,14 @@ namespace UserDiaryServer
             int _clientIdCheck = _packet.ReadInt();
             string response = _packet.ReadString();
 
+            Console.WriteLine(response);
             JMessage jdata = JMessage.Deserialize(response);
             utils.RegisterRequest result = jdata.Value.ToObject<utils.RegisterRequest>();
-            //Console.WriteLine(result);
 
 
             //Console.WriteLine($"Username: {_username}, Password: {_password}");
 
-            dynamic res = UserDiary.Cache.getCache().Register(result.name, result.username, result.password, result.email, result.phone);
+            //dynamic res = UserDiary.Cache.getCache().Register(result.name, result.username, result.password, result.email, result.phone);
 
             Console.WriteLine($" player {_fromClient} is here to register with username = {result.username}.");
             //In fulure, it will send dictionary
